@@ -1,4 +1,4 @@
-- priority: 1 
+- priority: 1
   name: RCLCPP_EXECUTOR_HOTPATH
   core_affinity: [1,2,3]
   scheduling_policy: RR

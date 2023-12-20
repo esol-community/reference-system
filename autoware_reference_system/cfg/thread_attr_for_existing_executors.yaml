@@ -1,8 +1,8 @@
-- priority: 10 
+- priority: 10
   name: RCLCPP_EXECUTOR_SINGLE_THREADED
   core_affinity: []
   scheduling_policy: RR
-- priority: 10 
+- priority: 10
   name: RCLCPP_EXECUTOR_MULTI_THREADED
   core_affinity: []
   scheduling_policy: RR

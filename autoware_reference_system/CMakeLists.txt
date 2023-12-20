@@ -49,6 +49,10 @@ if(${FRAMEWORK} STREQUAL ros)
   add_benchmark_executable(autoware_default_prioritized
     src/ros2/executor/autoware_default_prioritized.cpp)
 
+  # Prioritized Executor using REP-2017's feature
+  add_benchmark_executable(autoware_default_prioritized_using_rep2017
+    src/ros2/executor/autoware_default_prioritized_using_rep2017.cpp)
+
   # API `add_callback_group` not available in Foxy
   if(NOT $ENV{ROS_DISTRO} MATCHES "foxy")
     # Multiple executors on callback-group-level with suitable prioritization of critical path.
@@ -150,5 +154,5 @@ if(${BUILD_TESTING})
 endif()
 
 ament_auto_package(
-  INSTALL_TO_SHARE test scripts
+  INSTALL_TO_SHARE test scripts cfg
 )
