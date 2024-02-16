@@ -1,9 +1,9 @@
 - priority: 1
-  name: RCLCPP_EXECUTOR_HOTPATH
+  tag: RCLCPP_EXECUTOR_HOTPATH
   core_affinity: [1,2,3]
   scheduling_policy: RR
 - priority: 30
-  name: RCLCPP_EXECUTOR_PLANNER
+  tag: RCLCPP_EXECUTOR_PLANNER
   core_affinity: [0]
   scheduling_policy: RR
 

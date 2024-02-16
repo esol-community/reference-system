@@ -1,18 +1,20 @@
 # Getting started to use the REP-2017's infrastructure.
+
 This memo explains how to use the REP-2017's infrastructure proposed in the pull-request below.  
-https://github.com/ros-infrastructure/rep/pull/385  
+https://github.com/ros-infrastructure/rep/pull/385
 
-Throughout the procedures below, you can prepare the environment where the ROS 2 and benchmark application use the thread attribute configuration feature.  
+Throughout the procedures below, you can prepare the environment where the ROS 2 and benchmark application use the thread attribute configuration feature.
 
-## [Host PC] Create an SD card for Raspberry Pi 4  
+## [Host PC] Create an SD card for Raspberry Pi 4
+
 ````bash
 $ wget https://github.com/ros-realtime/ros-realtime-rpi4-image/releases/download/22.04.1_v5.15.39-rt42-raspi_ros2_humble/ubuntu-22.04.1-rt-ros2-arm64+raspi.img.xz
-#
-$ sudo rpi-imager --cli ubuntu-22.04.1-rt-ros2-arm64+raspi.img.xz [SD card's device node, e.g. /dev/sdc] 
+$ sudo rpi-imager --cli ubuntu-22.04.1-rt-ros2-arm64+raspi.img.xz [SD card's device node, e.g. /dev/sdc]
 ````
 After booting with the SD card above, you have to configure the Raspberry Pi 4 to connect to the internet.
 
 ## Prepare the build/execution environment for ROS 2 and sample benchmark.
+
 ````bash
 $ sudo apt purge -y needrestart
 $ sudo apt update && sudo apt install -y locales
@@ -49,7 +51,9 @@ $ sudo pip install psrecord
 $ sudo rm /etc/profile.d/99-source-ros.sh
 $ sudo reboot
 ````
+
 ## Build ROS 2 Rolling, adopting the patches related to the REP-2017.
+
 ````bash
 $ mkdir -p ros2_rolling/src
 $ cd ros2_rolling
@@ -65,6 +69,7 @@ $ colcon build --symlink-install --executor sequential
 ````
 
 ## Build reference-system benchmark modified to use the REP-2017 infrastructure.
+
 ````bash
 $ mkdir -p ~/ros2_ws/src
 $ cd ~/ros2_ws/src
@@ -75,10 +80,11 @@ $ colcon build --symlink-install --executor sequential
 ````
 
 ## Execute the benchmark(prioritized).
-To get the result without thread attribute settings, execute the benchmark 
+
+To get the result without thread attribute settings, execute the benchmark
 without the dedicated environment variable (ROS_THREAD_ATTRS_FILE).
 ````bash
-$ export ROS_THREAD_ATTRS_FILE= 
+$ export ROS_THREAD_ATTRS_FILE=
 $ python3 $(ros2 pkg prefix --share autoware_reference_system)/scripts/benchmark.py 120 autoware_default_prioritized_using_rep2017
 ````
 To get the result with the thread attribute settings, execute the benchmark after setting the environment variable to point to the YAML configuration file.
@@ -86,9 +92,31 @@ To get the result with the thread attribute settings, execute the benchmark afte
 $ export ROS_THREAD_ATTRS_FILE=~/ros2_ws/install/autoware_reference_system/share/autoware_reference_system/cfg/thread_attr_for_prioritized.yaml
 $ python3 $(ros2 pkg prefix --share autoware_reference_system)/scripts/benchmark.py 120 autoware_default_prioritized_using_rep2017
 ````
+You can check if the thread attribute settings are set expectedly with the command below.
+````
+$ ps -eLo pid,tid,class,rtprio,ni,pri,psr,comm | grep autoware
+   1137    1137 TS       -   0  19   2 autoware_defaul
+   1137    1140 TS       -   0  19   0 autoware_de-ust
+   1137    1141 TS       -   0  19   2 autoware_de-ust
+   1137    1142 TS       -   0  19   3 autoware_defaul
+   1137    1143 TS       -   0  19   0 autoware_defaul
+   1137    1151 TS       -   0  19   3 autoware_defaul
+   1137    1152 TS       -   0  19   0 autoware_defaul
+   1137    1153 TS       -   0  19   3 autoware_defaul
+   1137    1154 TS       -   0  19   3 autoware_defaul
+   1137    1155 TS       -   0  19   0 autoware_defaul
+   1137    1156 TS       -   0  19   2 autoware_defaul
+   1137    1157 RR       1   -  41   0 autoware_defaul
+   1137    1158 RR       1   -  41   1 autoware_defaul
+   1137    1159 RR       1   -  41   2 autoware_defaul
+   1137    1160 RR      30   -  70   2 autoware_defaul
+````
+
+Then, You can find scheduling policies and priorities in the third and fourth columns (e.g., "RR," 30).
 
 ## Execute the benchmark(singlethreaded/multithreaded).
-To get the result without thread attribute settings, execute the benchmark 
+
+To get the result without thread attribute settings, execute the benchmark
 without the dedicated environment variable (ROS_THREAD_ATTRS_FILE).
 ````bash
 $ export ROS_THREAD_ATTRS_FILE=
